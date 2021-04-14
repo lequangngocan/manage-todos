@@ -17,10 +17,7 @@ let router = new Router({
     {
       path: '/todo',
       name: 'Todo',
-      component: Todo,
-      meta: {
-        requiresAuth: true
-      }
+      component: Todo
     }
   ]
 })

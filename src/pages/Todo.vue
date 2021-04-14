@@ -24,7 +24,7 @@
                 <th scope="col">
                   <input type="checkbox" v-model="selectAll" @click="select">
                 </th>
-                <th scope="col">ID</th>
+                <th scope="col">#</th>
                 <th scope="col">Content</th>
                 <th scope="col">Status</th>
                 <th scope="col">Created At</th>
@@ -33,9 +33,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(todo, index) in this.getTodosForUser()" :key="index">
+              <tr v-for="(todo, index) in this.todos" :key="index">
                 <td><input type="checkbox" :value="todo.id" v-model="selected"></td>
-                <th scope="row"><span>{{ todo.id }}</span></th>
+                <th scope="row"><span>{{ index }}</span></th>
                 <td><span>{{ todo.content }}</span></td>
                 <td>
                   <span>{{ todo.status }}</span>
@@ -57,16 +57,6 @@
               </div>
             </div>
             <div class="form-group row">
-              <label class="col-sm-2 col-form-label">Status</label>
-              <div class="col-sm-10">
-                <select class="form-select" aria-label="Default select example" v-model="status">
-                  <option disabled value="">Open this select status</option>
-                  <option value="Inactive">Inactive</option>
-                  <option value="Active">Active</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group row">
               <div class="col-sm-12">
                 <button type="submit" class="btn btn-primary">Create New Todo</button>
               </div>
@@ -84,9 +74,8 @@
               <label class="col-sm-2 col-form-label">Status</label>
               <div class="col-sm-10">
                 <select class="form-select" aria-label="Default select example" v-model="status">
-                  <option disabled value="">Open this select status</option>
-                  <option value="Inactive">Inactive</option>
-                  <option value="Active">Active</option>
+                  <option value="active">active</option>
+                  <option value="completed">completed</option>
                 </select>
               </div>
             </div>
@@ -126,13 +115,10 @@ export default {
         })
     },
 
-    getUserId () {
-      return this.parseJwt(localStorage.getItem('token')).id
-    },
-
     getUser () {
+      const id = this.parseJwt(localStorage.getItem('token')).id
       for (let i = 0; i < this.users.length; i++) {
-        if (this.getUserId() === this.users[i].id) {
+        if (id === this.users[i].id) {
           return this.users[i]
         }
       }
@@ -146,10 +132,6 @@ export default {
       }
     },
 
-    getTodosForUser () {
-      return this.todos.filter(todo => todo.user.id === this.getUserId())
-    },
-
     addTodo () {
       if (this.getUser()) {
         if (this.content === '') {
@@ -159,9 +141,8 @@ export default {
             this.status = 'Inactive'
           }
           let content = this.content
-          let status = this.status
           let user = this.getUser()
-          this.$store.dispatch('addTodo', {content, status, user})
+          this.$store.dispatch('addTodo', {content, user})
           this.isActive = 1
         }
       }
@@ -182,7 +163,7 @@ export default {
         let id = this.todoId
         let content = this.content
         let status = this.status
-        this.$store.dispatch('editTodo', {id, content, status})
+        this.$store.dispatch('editTodo', {id, status, content})
         alert('Edit successfully')
       }
     },
@@ -198,8 +179,8 @@ export default {
     select () {
       this.selected = []
       if (!this.selectAll) {
-        for (let i in this.getTodosForUser()) {
-          this.selected.push(this.getTodosForUser()[i].id)
+        for (let i in this.todos) {
+          this.selected.push(this.todos[i].id)
         }
       }
     },
@@ -228,8 +209,7 @@ export default {
     ...mapState([
       'users',
       'todos'
-    ]),
-    isLoggedIn: function () { return this.$store.getters.isLoggedIn }
+    ])
   },
 
   mounted () {
