@@ -133,28 +133,24 @@ export default {
     },
 
     addTodo () {
-      if (this.getUser()) {
-        if (this.content === '') {
-          this.msg = 'Content is empty'
-        } else {
-          if (this.status === '') {
-            this.status = 'Inactive'
-          }
-          let content = this.content
-          let user = this.getUser()
-          this.$store.dispatch('addTodo', {content, user})
-          this.isActive = 1
+      if (this.content === '') {
+        this.msg = 'Content is empty'
+      } else {
+        if (this.status === '') {
+          this.status = 'Inactive'
         }
+        let content = this.content
+        let user = this.getUser()
+        this.$store.dispatch('addTodo', {content, user})
+        this.isActive = 1
       }
     },
 
     editTodo (id) {
-      if (this.getUser()) {
-        this.isActive = 3
-        this.content = this.getTodo(id).content
-        this.status = this.getTodo(id).status
-        this.todoId = id
-      }
+      this.isActive = 3
+      this.content = this.getTodo(id).content
+      this.status = this.getTodo(id).status
+      this.todoId = id
     },
 
     saveEdit () {
