@@ -11,7 +11,7 @@ export const store = new Vuex.Store({
   state: {
     users: [],
     todos: [],
-    isRegister: true,
+    isActive: true,
     token: localStorage.getItem('token') || '',
     user: {},
     status: ''

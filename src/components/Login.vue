@@ -20,16 +20,9 @@
           Sign In
         </button>
       </div>
-      <div class="text-center p-t-20">
-        <a href="#" class="txt2 hov1" @click="switchForm()">
-          Register
-        </a>
-      </div>
-    </form>
+  </form>
 </template>
 <script>
-import { mapState } from 'vuex'
-
 export default {
   data () {
     return {
@@ -40,9 +33,6 @@ export default {
   },
 
   methods: {
-    switchForm () {
-      this.$store.state.isRegister = true
-    },
 
     login () {
       let username = this.username
@@ -60,16 +50,6 @@ export default {
         })
       }
     }
-  },
-
-  mounted () {
-    this.$store.dispatch('getAllUser')
-  },
-
-  computed: {
-    ...mapState([
-      'users'
-    ])
   }
 }
 </script>

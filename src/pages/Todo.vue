@@ -53,7 +53,8 @@
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Content</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" placeholder="Content" v-model="content">
+                <input type="text" class="form-control" placeholder="Content" name="content" v-model="content" v-validate="'required'">
+                <p v-show="errors.has('content')">{{ errors.first('content') }}</p>
               </div>
             </div>
             <div class="form-group row">
@@ -66,8 +67,8 @@
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Content</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" :placeholder="this.content" v-model="content">
-                <span>{{ msg }}</span>
+                <input type="text" class="form-control" :placeholder="this.content" name="content" v-model="content" v-validate="'required'">
+                <p v-show="errors.has('content')">{{ errors.first('content') }}</p>
               </div>
             </div>
             <div class="form-group row">
@@ -133,17 +134,9 @@ export default {
     },
 
     addTodo () {
-      if (this.content === '') {
-        this.msg = 'Content is empty'
-      } else {
-        if (this.status === '') {
-          this.status = 'Inactive'
-        }
-        let content = this.content
-        let user = this.getUser()
-        this.$store.dispatch('addTodo', {content, user})
-        this.isActive = 1
-      }
+      let content = this.content
+      this.$store.dispatch('addTodo', {content})
+      this.isActive = 1
     },
 
     editTodo (id) {
