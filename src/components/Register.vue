@@ -8,7 +8,7 @@
       </div>
 
       <div class="wrap-input100 validate-input m-b-25">
-        <input class="input100" v-validate="{ required: true, regex: /^[a-zA-Z0-9_]+$/, min_value: 4 }" name="password" type="password" v-model="password" placeholder="password" ref="password">
+        <input class="input100" v-validate="{ required: true, regex: /^[a-zA-Z0-9_]{4,}$/ }" name="password" type="password" v-model="password" placeholder="password" ref="password">
         <span class="focus-input100"></span>
       </div>
 
@@ -17,7 +17,6 @@
         <span class="focus-input100"></span>
       </div>
 
-      <p>{{ msg }}</p>
       <p v-show="errors.has('username')">{{ errors.first('username') }}</p>
       <p v-show="errors.has('password')">{{ errors.first('password') }}</p>
       <p v-show="errors.has('password_confirmation')">{{ errors.first('password_confirmation') }}</p>
@@ -43,7 +42,6 @@ export default {
 
   data () {
     return {
-      msg: '',
       username: '',
       password: '',
       repassword: ''
@@ -64,8 +62,6 @@ export default {
             this.$store.dispatch('register', {username, password})
             alert('Account successfully created')
             this.switchForm()
-          } else {
-            this.msg = 'This account has already existed'
           }
         }
       })
