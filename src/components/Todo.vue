@@ -42,8 +42,8 @@
               <td>
                 <span>{{ todo.status }}</span>
               </td>
-              <td><span>{{ todo.created_at }}</span></td>
-              <td><span>{{ todo.updated_at }}</span></td>
+              <td><span>{{ moment(todo.created_at).format('YYYY-MM-DD hh:mm:ss a') }}</span></td>
+              <td><span>{{ moment(todo.updated_at).format('YYYY-MM-DD hh:mm:ss a') }}</span></td>
               <td>
                 <button type="button" class="btn btn-primary" @click="editTodo(todo.id)">Edit</button>
                 <button type="button" class="btn btn-danger" @click="deleteTodo(todo.id)">Delete</button>
@@ -94,7 +94,10 @@
   </div>
 </template>
 <script>
+import Vue from 'vue'
 import { mapState } from 'vuex'
+import moment from 'moment'
+Vue.prototype.moment = moment
 
 export default {
   name: 'Todo',
