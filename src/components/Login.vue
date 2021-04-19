@@ -41,18 +41,20 @@ export default {
     login () {
       let username = this.username
       let password = this.password
-      this.$validator.validateAll().then((result) => {
-        if (result) {
-          this.$store.dispatch('login', {username, password})
-            .then(() => {
-              if (this.$store.state.status !== 'error') {
-                this.$router.push({name: 'Todo'})
-              } else {
-                this.msg = 'Incorrect username or password'
-              }
-            })
-        }
-      })
+      if (!localStorage.getItem('token')) {
+        this.$validator.validateAll().then((result) => {
+          if (result) {
+            this.$store.dispatch('login', {username, password})
+              .then(() => {
+                if (this.$store.state.status !== 'error') {
+                  this.$router.push({name: 'Todo'})
+                } else {
+                  this.msg = 'Incorrect username or password'
+                }
+              })
+          }
+        })
+      }
     }
   }
 }
