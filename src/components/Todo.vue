@@ -141,8 +141,7 @@ export default {
     },
 
     addTodo () {
-      let content = this.content
-      this.$store.dispatch('addTodo', {content})
+      this.$store.dispatch('addTodo', {'content': this.content})
       this.isTabs = 'LIST'
     },
 
@@ -155,10 +154,7 @@ export default {
 
     saveEdit () {
       this.isTabs = 'LIST'
-      let id = this.todoId
-      let content = this.content
-      let status = this.status
-      this.$store.dispatch('editTodo', {id, status, content})
+      this.$store.dispatch('editTodo', {'id': this.todoId, 'status': this.status, 'content': this.content})
       alert('Edit successfully')
     },
 
