@@ -10,6 +10,7 @@ import { BootstrapVue } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VeeValidate from 'vee-validate'
+import moment from 'moment'
 
 require('@/assets/css/main.css')
 require('@/assets/css/util.css')
@@ -18,6 +19,7 @@ Vue.config.productionTip = false
 Vue.use(Vuex)
 Vue.use(BootstrapVue)
 Vue.use(VeeValidate)
+Vue.prototype.moment = moment
 
 Vue.prototype.$http = Axios
 const token = localStorage.getItem('token')

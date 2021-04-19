@@ -94,10 +94,7 @@
   </div>
 </template>
 <script>
-import Vue from 'vue'
 import { mapState } from 'vuex'
-import moment from 'moment'
-Vue.prototype.moment = moment
 
 export default {
   name: 'Todo',
