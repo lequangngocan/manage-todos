@@ -4,33 +4,22 @@ import axios from 'axios'
 
 Vue.use(Vuex, axios)
 
-const baseUrl = 'https://todo-mvc-api-typeorm.herokuapp.com/'
+axios.defaults.baseURL = 'https://todo-mvc-api-typeorm.herokuapp.com/'
 
 export const store = new Vuex.Store({
 
   state: {
-    users: [],
     todos: [],
-    isActive: true,
-    token: localStorage.getItem('token') || '',
     user: {},
     status: ''
-  },
-
-  getters: {
-    allUsername: state => {
-      return state.users.map(user => user.username)
-    }
   },
 
   actions: {
     async register ({commit}, user) {
       await axios
-        .post(baseUrl + 'auth/register', user)
-        .then(response => {
-          const token = response.data.token
-          const user = response.data
-          commit('AUTH_SUCCESS', token, user)
+        .post('auth/register', user)
+        .then(() => {
+          commit('AUTH_SUCCESS')
         })
         .catch(error => {
           commit('AUTH_ERROR')
@@ -40,13 +29,13 @@ export const store = new Vuex.Store({
 
     async login ({commit}, user) {
       await axios
-        .post(baseUrl + 'auth/login', user)
+        .post('auth/login', user)
         .then(response => {
           const token = response.data.token
           const user = response.data
           axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
           localStorage.setItem('token', token)
-          commit('AUTH_SUCCESS', token, user)
+          commit('AUTH_SUCCESS', user)
         })
         .catch(error => {
           commit('AUTH_ERROR')
@@ -60,21 +49,9 @@ export const store = new Vuex.Store({
       localStorage.removeItem('token')
     },
 
-    async getAllUser ({commit}) {
-      await axios
-        .get(baseUrl + 'api/users')
-        .then(response => {
-          const data = response.data
-          commit('SET_USERS', data)
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
-
     async getTodos ({commit}) {
       await axios
-        .get(baseUrl + 'api/todos')
+        .get('api/todos')
         .then(response => {
           const data = response.data.items
           commit('SET_TODOS', data)
@@ -86,7 +63,7 @@ export const store = new Vuex.Store({
 
     async addTodo ({commit}, todo) {
       await axios
-        .post(baseUrl + 'api/todos', todo)
+        .post('api/todos', todo)
         .then(response => {
           const data = response.data
           commit('ADD_TODOS', data)
@@ -98,7 +75,7 @@ export const store = new Vuex.Store({
 
     async editTodo ({commit}, todo) {
       await axios
-        .put(baseUrl + 'api/todos/' + todo.id, { 'status': todo.status, 'content': todo.content })
+        .put('api/todos/' + todo.id, { 'status': todo.status, 'content': todo.content })
         .then(response => {
           const data = response.data
           commit('EDIT_TODOS', data)
@@ -110,7 +87,7 @@ export const store = new Vuex.Store({
 
     async deleteTodo ({commit}, id) {
       await axios
-        .delete(baseUrl + 'api/todos/' + id)
+        .delete('api/todos/' + id)
         .then(response => {
           commit('DELETE_TODOS', id)
         })
@@ -121,23 +98,18 @@ export const store = new Vuex.Store({
   },
 
   mutations: {
-    SET_USERS (state, users) {
-      Vue.set(state, 'users', users)
+    AUTH_SUCCESS (state, user) {
+      Vue.set(state, 'status', 'success')
+      Vue.set(state, 'user', user)
     },
 
-    AUTH_SUCCESS (token, user) {
-      Vue.status = 'success'
-      Vue.token = token
-      Vue.user = user
+    AUTH_ERROR (state) {
+      Vue.set(state, 'status', 'error')
     },
 
-    AUTH_ERROR () {
-      Vue.status = 'error'
-    },
-
-    LOGOUT () {
-      Vue.status = ''
-      Vue.token = ''
+    LOGOUT (state) {
+      Vue.set(state, 'status', '')
+      Vue.set(state, 'user', {})
     },
 
     SET_TODOS (state, todos) {

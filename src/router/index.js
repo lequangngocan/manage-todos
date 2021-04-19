@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/pages/Index'
-import Todo from '@/pages/Todo'
+import Login from '@/components/Login'
+import Register from '@/components/Register'
+import Index from '@/components/Index'
+import Todo from '@/components/Todo'
 
 Vue.use(Router)
 
@@ -15,6 +17,16 @@ let router = new Router({
       component: Index
     },
     {
+      path: '/register',
+      name: 'Register',
+      component: Register
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
       path: '/todo',
       name: 'Todo',
       component: Todo
@@ -23,7 +35,7 @@ let router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/']
+  const publicPages = ['/', '/login', '/register']
   const authRequired = !publicPages.includes(to.path)
   const loggedIn = localStorage.getItem('token')
 
