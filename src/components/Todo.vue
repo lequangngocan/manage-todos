@@ -1,24 +1,26 @@
 <template>
   <div class="container-login100">
     <div class="todo-page container">
-      <div class="row">
-        <div class="col-md-6 col-sm-12">
-          <button type="button" class="btn btn-secondary button-left" @click="logout()">Logout</button>
-          <button type="button" class="btn btn-danger" v-show="isActive === 'LIST'" @click="deleteMultipleTodo()">Delete Selected</button>
+      <div class="row p-b-30 list-button">
+        <div class="col-md-12 col-xs-12 col-sm-12 p-b-20">
+          <h1 class="title">Hi {{ this.$store.state.user.username }} !</h1>
         </div>
-        <div class="col-md-6 col-sm-12">
-          <h1 class="title p-b-30 p-t-30">Hi {{ this.$store.state.user.username }} !</h1>
+        <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10">
+          <button class="list-group-item list-group-item-action" :class="{active: isTabs === 'LIST' || isTabs === 'EDIT'}" @click="isTabs = 'LIST'">Todo List</button>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10">
+          <button class="list-group-item list-group-item-action bg-add" :class="{active: isTabs === 'ADD'}" @click="isTabs = 'ADD'; content = ''">New Todo</button>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10" v-if="isTabs === 'LIST'">
+          <button type="button" class="btn btn-danger" @click="deleteMultipleTodo()">Delete Selected</button>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10">
+          <button type="button" class="btn btn-secondary float-right" @click="logout()">Logout</button>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3 col-sm-12">
-          <div class="list-group">
-            <button class="list-group-item list-group-item-action" :class="{active: isActive === 'LIST' || isActive === 'EDIT'}" @click="isActive = 'LIST'">Todo List</button>
-            <button class="list-group-item list-group-item-action" :class="{active: isActive === 'ADD'}" @click="isActive = 'ADD'; content = ''">New Todo</button>
-          </div>
-        </div>
-        <div class="col-md-9 col-sm-12 overflow-auto">
-          <table class="table" v-if="isActive === 'LIST'">
+        <div class="col-md-12 col-sm-12 overflow-auto">
+          <table class="table" v-if="isTabs === 'LIST'">
             <thead>
             <tr>
               <th scope="col">
@@ -40,8 +42,8 @@
               <td>
                 <span>{{ todo.status }}</span>
               </td>
-              <td><span>{{ todo.created_at | moment }}</span></td>
-              <td><span>{{ todo.updated_at | moment }}</span></td>
+              <td><span>{{ todo.created_at }}</span></td>
+              <td><span>{{ todo.updated_at }}</span></td>
               <td>
                 <button type="button" class="btn btn-primary" @click="editTodo(todo.id)">Edit</button>
                 <button type="button" class="btn btn-danger" @click="deleteTodo(todo.id)">Delete</button>
@@ -49,7 +51,7 @@
             </tr>
             </tbody>
           </table>
-          <form v-if="isActive === 'ADD'" @submit.prevent="addTodo()">
+          <form v-if="isTabs === 'ADD'" @submit.prevent="addTodo()">
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Content</label>
               <div class="col-sm-10">
@@ -59,11 +61,11 @@
             </div>
             <div class="form-group row">
               <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary">Create New Todo</button>
+                <button type="submit" class="btn btn-success">Create New Todo</button>
               </div>
             </div>
           </form>
-          <form v-if="isActive === 'EDIT'" @submit.prevent="saveEdit()">
+          <form v-if="isTabs === 'EDIT'" @submit.prevent="saveEdit()">
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Content</label>
               <div class="col-sm-10">
@@ -82,7 +84,7 @@
             </div>
             <div class="form-group row">
               <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary">Save Edit</button>
+                <button type="submit" class="btn btn-success">Save Edit</button>
               </div>
             </div>
           </form>
@@ -93,18 +95,33 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import moment from 'moment'
 
 export default {
+  name: 'Todo',
+
   data () {
     return {
-      isActive: ['LIST', 'ADD', 'EDIT'],
+      isTabs: ['LIST', 'ADD', 'EDIT'],
       content: '',
       status: '',
       todoId: null,
       selected: [],
       selectAll: false
     }
+  },
+
+  computed: {
+    ...mapState([
+      'todos'
+    ])
+  },
+
+  created () {
+    this.isTabs = 'LIST'
+  },
+
+  mounted () {
+    this.$store.dispatch('getTodos')
   },
 
   methods: {
@@ -126,18 +143,18 @@ export default {
     addTodo () {
       let content = this.content
       this.$store.dispatch('addTodo', {content})
-      this.isActive = 'LIST'
+      this.isTabs = 'LIST'
     },
 
     editTodo (id) {
-      this.isActive = 'EDIT'
+      this.isTabs = 'EDIT'
       this.content = this.getTodo(id).content
       this.status = this.getTodo(id).status
       this.todoId = id
     },
 
     saveEdit () {
-      this.isActive = 'LIST'
+      this.isTabs = 'LIST'
       let id = this.todoId
       let content = this.content
       let status = this.status
@@ -168,26 +185,25 @@ export default {
         this.selectAll = false
       }
     }
-  },
-
-  computed: {
-    ...mapState([
-      'todos'
-    ])
-  },
-
-  mounted () {
-    this.$store.dispatch('getTodos')
-  },
-
-  filters: {
-    moment: function (date) {
-      return moment(String(date)).format('YYYY-MM-DD hh:mm:ss a')
-    }
-  },
-
-  created () {
-    this.isActive = 'LIST'
   }
 }
 </script>
+<style scoped>
+.list-group-item {
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}
+
+.list-group-item.bg-add {
+  z-index: 2;
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+}
+
+.list-button .btn {
+  width: 100%;
+}
+</style>
