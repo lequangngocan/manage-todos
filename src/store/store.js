@@ -7,7 +7,6 @@ Vue.use(Vuex, axios)
 axios.defaults.baseURL = 'https://todo-mvc-api-typeorm.herokuapp.com/'
 
 export const store = new Vuex.Store({
-
   state: {
     todos: [],
     user: {},

@@ -134,6 +134,10 @@ iframe {
   margin: 0;
 }
 
+.button-left {
+  float: left !important;
+}
+
 /*//////////////////////////////////////////////////////////////////
 [ Utility ]*/
 #app {

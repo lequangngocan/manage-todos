@@ -3,8 +3,8 @@
     <div class="todo-page container">
       <div class="row">
         <div class="col-md-6 col-sm-12">
-          <button type="button" class="btn btn-secondary pull-left" style="float:left;" @click="logout()">Logout</button>
-          <button type="button" class="btn btn-danger" v-show="isActive === 1" @click="deleteMultipleTodo()">Delete Selected</button>
+          <button type="button" class="btn btn-secondary button-left" @click="logout()">Logout</button>
+          <button type="button" class="btn btn-danger" v-show="isActive === 'LIST'" @click="deleteMultipleTodo()">Delete Selected</button>
         </div>
         <div class="col-md-6 col-sm-12">
           <h1 class="title p-b-30 p-t-30">Hi {{ this.$store.state.user.username }} !</h1>
@@ -13,12 +13,12 @@
       <div class="row">
         <div class="col-md-3 col-sm-12">
           <div class="list-group">
-            <button class="list-group-item list-group-item-action" :class="{active: isActive === 1 || isActive === 3}" @click="isActive = 1">Todo List</button>
-            <button class="list-group-item list-group-item-action" :class="{active: isActive === 2}" @click="isActive = 2; content = ''">New Todo</button>
+            <button class="list-group-item list-group-item-action" :class="{active: isActive === 'LIST' || isActive === 'EDIT'}" @click="isActive = 'LIST'">Todo List</button>
+            <button class="list-group-item list-group-item-action" :class="{active: isActive === 'ADD'}" @click="isActive = 'ADD'; content = ''">New Todo</button>
           </div>
         </div>
-        <div class="col-md-9 col-sm-12" style="overflow-x: auto">
-          <table class="table" v-if="isActive === 1">
+        <div class="col-md-9 col-sm-12 overflow-auto">
+          <table class="table" v-if="isActive === 'LIST'">
             <thead>
             <tr>
               <th scope="col">
@@ -49,7 +49,7 @@
             </tr>
             </tbody>
           </table>
-          <form v-if="isActive === 2" @submit.prevent="addTodo()">
+          <form v-if="isActive === 'ADD'" @submit.prevent="addTodo()">
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Content</label>
               <div class="col-sm-10">
@@ -63,7 +63,7 @@
               </div>
             </div>
           </form>
-          <form v-if="isActive === 3" @submit.prevent="saveEdit()">
+          <form v-if="isActive === 'EDIT'" @submit.prevent="saveEdit()">
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Content</label>
               <div class="col-sm-10">
@@ -98,7 +98,7 @@ import moment from 'moment'
 export default {
   data () {
     return {
-      isActive: 1,
+      isActive: ['LIST', 'ADD', 'EDIT'],
       content: '',
       status: '',
       todoId: null,
@@ -124,38 +124,30 @@ export default {
     },
 
     addTodo () {
-      if (localStorage.getItem('token')) {
-        let content = this.content
-        this.$store.dispatch('addTodo', {content})
-        this.isActive = 1
-      }
+      let content = this.content
+      this.$store.dispatch('addTodo', {content})
+      this.isActive = 'LIST'
     },
 
     editTodo (id) {
-      if (localStorage.getItem('token')) {
-        this.isActive = 3
-        this.content = this.getTodo(id).content
-        this.status = this.getTodo(id).status
-        this.todoId = id
-      }
+      this.isActive = 'EDIT'
+      this.content = this.getTodo(id).content
+      this.status = this.getTodo(id).status
+      this.todoId = id
     },
 
     saveEdit () {
-      if (localStorage.getItem('token')) {
-        this.isActive = 1
-        let id = this.todoId
-        let content = this.content
-        let status = this.status
-        this.$store.dispatch('editTodo', {id, status, content})
-        alert('Edit successfully')
-      }
+      this.isActive = 'LIST'
+      let id = this.todoId
+      let content = this.content
+      let status = this.status
+      this.$store.dispatch('editTodo', {id, status, content})
+      alert('Edit successfully')
     },
 
     deleteTodo (id) {
-      if (localStorage.getItem('token')) {
-        if (confirm('Do you really want to delete?')) {
-          this.$store.dispatch('deleteTodo', id)
-        }
+      if (confirm('Do you really want to delete?')) {
+        this.$store.dispatch('deleteTodo', id)
       }
     },
 
@@ -169,13 +161,11 @@ export default {
     },
 
     deleteMultipleTodo () {
-      if (localStorage.getItem('token')) {
-        if (confirm('Do you really want to delete ' + this.selected.length + ' item?')) {
-          for (let i = 0; i < this.selected.length; i++) {
-            this.$store.dispatch('deleteTodo', this.selected[i])
-          }
-          this.selectAll = false
+      if (confirm('Do you really want to delete ' + this.selected.length + ' item?')) {
+        for (let i = 0; i < this.selected.length; i++) {
+          this.$store.dispatch('deleteTodo', this.selected[i])
         }
+        this.selectAll = false
       }
     }
   },
@@ -194,6 +184,10 @@ export default {
     moment: function (date) {
       return moment(String(date)).format('YYYY-MM-DD hh:mm:ss a')
     }
+  },
+
+  created () {
+    this.isActive = 'LIST'
   }
 }
 </script>

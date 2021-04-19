@@ -44,15 +44,12 @@ export default {
   },
 
   methods: {
-
     register () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          let username = this.username
-          let password = this.password
-          this.$store.dispatch('register', {username, password})
+          this.$store.dispatch('register', { 'username': this.username, 'password': this.password })
             .then(() => {
-              if (this.$store.state.status !== 'error') {
+              if (this.$store.state.status === 'success') {
                 alert('Account successfully created')
                 this.$router.push({name: 'Login'})
               } else {
