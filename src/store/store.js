@@ -52,6 +52,7 @@ export const store = new Vuex.Store({
     },
 
     async getTodos ({commit}) {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.state.token
       await axios
         .get('api/todos')
         .then(response => {
