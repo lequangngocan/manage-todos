@@ -272,6 +272,7 @@ iframe {
 
 .login100-form {
   width: 100%;
+  padding-bottom: 20px;
 }
 
 .login100-form-title {
@@ -525,23 +526,5 @@ iframe {
   .wrap-login100 {
     padding-left: 15px;
     padding-right: 15px;
-  }
-}
-
-@media (min-width: 768px) {
-  .todo-page h1 {
-    padding-top: 0;
-    float: left;
-  }
-  .table {
-    margin-top: 0;
-  }
-  .todo-page .btn-danger {
-    float: left;
-    margin-left: 20px;
-  }
-  .table .btn-danger {
-    float: initial;
-    margin: 0;
   }
 }
