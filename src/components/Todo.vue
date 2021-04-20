@@ -3,15 +3,15 @@
     <div class="todo-page container">
       <div class="row p-b-30 list-button">
         <div class="col-md-12 col-xs-12 col-sm-12 p-b-20">
-          <h1 class="title">Hi {{ this.$store.state.user.username }} !</h1>
+          <h1 class="title">Hello !</h1>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10">
-          <button class="list-group-item list-group-item-action" :class="{active: isTabs === 'LIST' || isTabs === 'EDIT'}" @click="isTabs = 'LIST'">Todo List</button>
+          <button class="list-group-item list-group-item-action" :class="{active: type === 'list' || type === 'edit'}" @click="type = 'list'">Todo List</button>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10">
-          <button class="list-group-item list-group-item-action bg-add" :class="{active: isTabs === 'ADD'}" @click="isTabs = 'ADD'; content = ''">New Todo</button>
+          <button class="list-group-item list-group-item-action bg-add" :class="{active: type === 'add'}" @click="type = 'add'; content = ''">New Todo</button>
         </div>
-        <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10" v-if="isTabs === 'LIST'">
+        <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10" v-if="type === 'list'">
           <button type="button" class="btn btn-danger" @click="deleteMultipleTodo()">Delete Selected</button>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12 p-t-10 p-b-10">
@@ -20,7 +20,7 @@
       </div>
       <div class="row">
         <div class="col-md-12 col-sm-12 overflow-auto">
-          <table class="table" v-if="isTabs === 'LIST'">
+          <table class="table" v-if="type === 'list'">
             <thead>
             <tr>
               <th scope="col">
@@ -51,7 +51,7 @@
             </tr>
             </tbody>
           </table>
-          <form v-if="isTabs === 'ADD'" @submit.prevent="addTodo()">
+          <form v-if="type === 'add'" @submit.prevent="addTodo()">
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Content</label>
               <div class="col-sm-10">
@@ -65,7 +65,7 @@
               </div>
             </div>
           </form>
-          <form v-if="isTabs === 'EDIT'" @submit.prevent="saveEdit()">
+          <form v-if="type === 'edit'" @submit.prevent="saveEdit()">
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Content</label>
               <div class="col-sm-10">
@@ -101,7 +101,7 @@ export default {
 
   data () {
     return {
-      isTabs: ['LIST', 'ADD', 'EDIT'],
+      type: 'list',
       content: '',
       status: '',
       todoId: null,
@@ -117,10 +117,6 @@ export default {
   },
 
   created () {
-    this.isTabs = 'LIST'
-  },
-
-  mounted () {
     this.$store.dispatch('getTodos')
   },
 
@@ -142,18 +138,18 @@ export default {
 
     addTodo () {
       this.$store.dispatch('addTodo', {'content': this.content})
-      this.isTabs = 'LIST'
+      this.type = 'list'
     },
 
     editTodo (id) {
-      this.isTabs = 'EDIT'
+      this.type = 'edit'
       this.content = this.getTodo(id).content
       this.status = this.getTodo(id).status
       this.todoId = id
     },
 
     saveEdit () {
-      this.isTabs = 'LIST'
+      this.type = 'list'
       this.$store.dispatch('editTodo', {'id': this.todoId, 'status': this.status, 'content': this.content})
       alert('Edit successfully')
     },

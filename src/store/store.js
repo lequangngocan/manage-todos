@@ -9,8 +9,12 @@ axios.defaults.baseURL = 'https://todo-mvc-api-typeorm.herokuapp.com/'
 export const store = new Vuex.Store({
   state: {
     todos: [],
-    user: {},
+    token: localStorage.getItem('token') || '',
     status: ''
+  },
+
+  getters: {
+    isLoggedIn: state => !!state.token
   },
 
   actions: {
@@ -31,10 +35,9 @@ export const store = new Vuex.Store({
         .post('auth/login', user)
         .then(response => {
           const token = response.data.token
-          const user = response.data
           axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
           localStorage.setItem('token', token)
-          commit('AUTH_SUCCESS', user)
+          commit('AUTH_SUCCESS', token)
         })
         .catch(error => {
           commit('AUTH_ERROR')
@@ -97,9 +100,9 @@ export const store = new Vuex.Store({
   },
 
   mutations: {
-    AUTH_SUCCESS (state, user) {
+    AUTH_SUCCESS (state, token) {
       Vue.set(state, 'status', 'success')
-      Vue.set(state, 'user', user)
+      Vue.set(state, 'token', token)
     },
 
     AUTH_ERROR (state) {
@@ -108,7 +111,7 @@ export const store = new Vuex.Store({
 
     LOGOUT (state) {
       Vue.set(state, 'status', '')
-      Vue.set(state, 'user', {})
+      Vue.set(state, 'token', '')
     },
 
     SET_TODOS (state, todos) {

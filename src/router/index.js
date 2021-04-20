@@ -4,6 +4,7 @@ import Login from '@/components/Login'
 import Register from '@/components/Register'
 import Index from '@/components/Index'
 import Todo from '@/components/Todo'
+import { store } from '../store/store'
 
 Vue.use(Router)
 
@@ -37,7 +38,7 @@ let router = new Router({
 router.beforeEach((to, from, next) => {
   const publicPages = ['/', '/login', '/register']
   const authRequired = !publicPages.includes(to.path)
-  const loggedIn = localStorage.getItem('token')
+  const loggedIn = store.getters.isLoggedIn
 
   if (authRequired && !loggedIn) {
     return next('/')
